@@ -1,0 +1,84 @@
+//Part I – Test Plan & Strategy
+1. User Registration
+
+Main Goal:
+Ensure the user registration API works correctly, validates all fields, and rejects invalid data. Confirm that duplicate users cannot be created.
+
+Scope:
+Fields to test: first_name, middle_name, last_name, phone_number, email, username, password, confirm_password. Test each individually and in combination.
+
+Test Strategy:
+
+Positive tests: Provide valid data to confirm successful registration.
+
+Negative tests: Provide invalid/missing data to verify validation messages and error codes.
+
+Positive Cases:
+
+All fields correct → user created.
+
+Unique email and username → success.
+
+Password ≥ 8 characters and matches confirm → success.
+
+Correct phone format → success.
+
+Negative Cases:
+
+Missing required field → fail.
+
+Invalid email format → fail.
+
+Password < 8 chars → fail.
+
+Password and confirm mismatch → fail.
+
+Duplicate email/username → fail.
+
+Invalid phone → fail.
+
+Empty payload → multiple validation errors.
+
+Test Data:
+Normal names, test@example.com, invalid emails like "abc@", valid and invalid passwords, duplicate emails.
+
+Expected Output:
+
+Valid data → HTTP 200/201, success: true, message "User registered successfully".
+
+Invalid data → HTTP 400/422, field-specific error messages. API should not crash or leak sensitive info.
+
+2. User Login
+
+Main Goal:
+Ensure authentication works correctly and invalid credentials are rejected.
+
+Test Strategy:
+
+Manual POST requests using Postman.
+
+Verify status codes, response body, and validation messages.
+
+Test for robustness against invalid or random inputs.
+
+Positive Case:
+
+Valid email + valid password → HTTP 200, success message, token returned.
+
+Negative Cases:
+
+Wrong password → fail.
+
+Wrong email → fail.
+
+Empty fields → fail.
+
+Bad email format → fail.
+
+Short password → fail.
+
+Expected Output:
+
+Valid credentials → success: true, login success, token returned.
+
+Invalid credentials → proper error message, no token, secure handling.

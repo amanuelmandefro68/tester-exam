@@ -1,0 +1,46 @@
+Part IV – Browser Automation (Cypress 14+)
+1. Registration Page Test
+describe('Registration Page Test', () => {
+
+  it('user can register and see verify code', () => {
+
+    cy.visit('https://api.liyu.qelemmeda.et/api/register/user');
+
+    cy.get('[data-cy="first name"]').type('testFirst');
+    cy.get('[data-cy="middle name"]').type('testMid');
+    cy.get('[data-cy="last name"]').type('testLast');
+    cy.get('[data-cy="phone number"]').type('0911223344');
+    cy.get('[data-cy="email"]').type('test@example.com');
+    cy.get('[data-cy="username"]').type('testuser1');
+    cy.get('[data-cy="password"]').type('Password123');
+    cy.get('[data-cy="confirm_password"]').type('Password123');
+    cy.get('[data-cy="register"]').click();
+
+    cy.get('[data-cy="otp"]').should('be.visible');
+    cy.get('[data-cy="verify code"]').click();
+  });
+
+
+
+});
+
+2. Login Page Test
+describe('Login Page Test', () => {
+
+  it('user can login with correct credentials', () => {
+    cy.visit('https://api.liyu.qelemmeda.et/api/register/user');
+    cy.get('[data-cy="email"]').type('test@example.com');
+    cy.get('[data-cy="password"]').type('Password123');
+    cy.get('[data-cy="login"]').click();
+    cy.url().should('include', '/dashboard');
+  });
+
+  it('login fails with wrong credentials', () => {
+    cy.visit('https://api.liyu.qelemmeda.et/api/register/user');
+    cy.get('[data-cy="email"]').type('wrong@example.com');
+    cy.get('[data-cy="password"]').type('wrongpass');
+    cy.get('[data-cy="login"]').click();
+    cy.get('[data-cy="login error"]').should('be.visible');
+  });
+
+});

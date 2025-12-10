@@ -1,0 +1,42 @@
+Part III – Test Code (Pest)
+1. User Registration Test
+it('registers a user through the external API', function () {
+
+    Http::fake([
+        'https://api.liyu.qelemmeda.et/api/register/user' => Http::response([
+            'success' => true,
+            'message' => 'User registered successfully'
+        ], 200)
+    ]);
+
+    $payload = [
+        'email' => 'test@example.com',
+        'phone_number' => '0912345678',
+        'password' => 'testpassword',
+        'password_confirmation' => 'testpassword',
+        'username' => 'testUsername',
+        'first_name' => 'testFirstName',
+        'middle_name' => 'testMiddleName',
+        'last_name' => 'testLastName',
+    ];
+
+    $response = Http::post('https://api.liyu.qelemmeda.et/api/register/user', $payload);
+
+    expect($response->status())->toBe(200);
+    expect($response->json('success'))->toBeTrue();
+    expect($response->json('message'))->toBe('User registered successfully');
+});
+
+2. User Login Test
+it('tests user login functionality', function () {
+
+    $payload = [
+        'email' => 'test@example.com',
+        'password' => 'testPassword'
+    ];
+
+    $response = Http::post('https://api.lyu.qelemmeda.et/api/login', $payload);
+
+    expect($response->status())->toBe(200);
+    expect($response->json('token'))->not->toBeNull();
+});

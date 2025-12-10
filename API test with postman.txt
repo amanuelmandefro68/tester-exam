@@ -1,0 +1,77 @@
+Part II – Postman API Tests
+1. User Registration
+
+Endpoint:
+POST https://api.liyu.qelemmeda.et/api/register/user
+
+Headers:
+
+{
+  "Content-Type": "application/json",
+  "Accept": "application/json"
+}
+
+
+Body:
+
+{
+  "first_name": "testFirstName",
+  "middle_name": "testMName",
+  "last_name": "testLastName",
+  "phone_number": "0912345678",
+  "email": "test@example.com",
+  "username": "testname",
+  "password": "password123",
+  "confirm_password": "password123"
+}
+
+
+Expected Output:
+
+{
+  "success": true,
+  "message": "User registered successfully"
+}
+
+
+Verification:
+
+Status code is 200/201.
+
+success field is true.
+
+Message confirms user creation.
+
+Response in JSON format.
+
+2. User Login
+
+Endpoint:
+POST https://api.liyu.qelemmeda.et/api/login
+
+Body:
+
+{
+  "email": "test@example.com",
+  "password": "Password123"
+}
+
+
+Expected Output:
+
+{
+  "success": true,
+  "message": "Login success",
+  "token": "some_token"
+}
+
+
+Verification:
+
+Status code 200/201.
+
+success = true.
+
+Token returned.
+
+Login error messages for invalid credentials.
