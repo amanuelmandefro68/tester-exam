@@ -1,16 +1,42 @@
-Part III – Test Code (Pest)
-1. User Registration Test
-it('registers a user through the external API', function () {
+use Illuminate\Support\Facades\Http;
 
+// 1. Successful registration
+it('Register a user successfull', function () {
     Http::fake([
         'https://api.liyu.qelemmeda.et/api/register/user' => Http::response([
             'success' => true,
-            'message' => 'User registered successfully'
+            'message' => 'User Registered succesfully'
         ], 200)
     ]);
 
     $payload = [
         'email' => 'test@example.com',
+        'phone_number' => '0912345678',
+        'password' => 'testpassword',
+        'password_confirmation' => 'testpassword',
+        'username' => 'testUsername',
+        'first_name' => 'TestFirstName',
+        'middle_name' => 'testmiddleName',
+        'last_name' => 'testLastName',
+    ];
+
+    $response = Http::post('https://api.liyu.qelemmeda.et/api/register/user', $payload);
+
+    expect($response->status())->toBe(200);
+    expect($response->json('success'))->toBeTrue();
+    expect($response->json('message'))->toBe('User Registered succesfully');
+});
+
+// 2. registration missing email
+it('register fail if email not provided', function () {
+    Http::fake([
+        'https://api.liyu.qelemmeda.et/api/register/user' => Http::response([
+            'success' => false,
+            'message' => 'Validation error email required'
+        ], 422)
+    ]);
+
+    $payload = [
         'phone_number' => '0912345678',
         'password' => 'testpassword',
         'password_confirmation' => 'testpassword',
@@ -22,17 +48,109 @@ it('registers a user through the external API', function () {
 
     $response = Http::post('https://api.liyu.qelemmeda.et/api/register/user', $payload);
 
-    expect($response->status())->toBe(200);
-    expect($response->json('success'))->toBeTrue();
-    expect($response->json('message'))->toBe('User registered successfully');
+    expect($response->status())->toBe(422);
+    expect($response->json('success'))->toBeFalse();
+    expect($response->json('message'))->toContain('Validation error');
 });
 
-2. User Login Test
-it('tests user login functionality', function () {
+// 3. registration duplicate email
+it('Register fail with same email', function () {
+    Http::fake([
+        'https://api.liyu.qelemmeda.et/api/register/user' => Http::response([
+            'success' => false,
+            'message' => 'Email allready exists'
+        ], 409)
+    ]);
 
     $payload = [
         'email' => 'test@example.com',
-        'password' => 'testPassword'
+        'phone_number' => '0912345678',
+        'password' => 'testpassword',
+        'password_confirmation' => 'testpassword',
+        'username' => 'testUsername',
+        'first_name' => 'TestFirstName',
+        'middle_name' => 'testMiddleName',
+        'last_name' => 'testLastName',
+    ];
+
+    $response = Http::post('https://api.liyu.qelemmeda.et/api/register/user', $payload);
+
+    expect($response->status())->toBe(409);
+    expect($response->json('success'))->toBeFalse();
+    expect($response->json('message'))->toBe('Email allready exists');
+});
+
+// 4. registration weak password
+it('register fail if password too weak', function () {
+    Http::fake([
+        'https://api.liyu.qelemmeda.et/api/register/user' => Http::response([
+            'success' => false,
+            'message' => 'Password too weak'
+        ], 422)
+    ]);
+
+    $payload = [
+        'email' => 'newuser@example.com',
+        'phone_number' => '0912345678',
+        'password' => '123',
+        'password_confirmation' => '123',
+        'username' => 'newUser',
+        'first_name' => 'newFirstName',
+        'middle_name' => 'newMiddleName',
+        'last_name' => 'newLastName',
+    ];
+
+    $response = Http::post('https://api.liyu.qelemmeda.et/api/register/user', $payload);
+
+    expect($response->status())->toBe(422);
+    expect($response->json('success'))->toBeFalse();
+    expect($response->json('message'))->toBe('Password too weak');
+});
+
+// 5. registration invalid phone number
+it('register fail if phone number invalid', function () {
+    Http::fake([
+        'https://api.liyu.qelemmeda.et/api/register/user' => Http::response([
+            'success' => false,
+            'message' => 'Phone number invalid'
+        ], 422)
+    ]);
+
+    $payload = [
+        'email' => 'newuser2@example.com',
+        'phone_number' => 'abcd123',
+        'password' => 'testpassword',
+        'password_confirmation' => 'testpassword',
+        'username' => 'newUser2',
+        'first_name' => 'FirstName2',
+        'middle_name' => 'MiddleName2',
+        'last_name' => 'LastName2',
+    ];
+
+    $response = Http::post('https://api.liyu.qelemmeda.et/api/register/user', $payload);
+
+    expect($response->status())->toBe(422);
+    expect($response->json('success'))->toBeFalse();
+    expect($response->json('message'))->toBe('Phone number invalid');
+});
+
+
+
+
+
+use Illuminate\Support\Facades\Http;
+
+// 1. login success
+it('Login successfull with correct details', function () {
+    Http::fake([
+        'https://api.lyu.qelemmeda.et/api/login' => Http::response([
+            'token' => 'some_jwt_token'
+        ], 200)
+    ]);
+
+    $payload = [
+        'email' => 'test@example.com',
+        'password' => 'testpassword',
     ];
 
     $response = Http::post('https://api.lyu.qelemmeda.et/api/login', $payload);
@@ -40,3 +158,78 @@ it('tests user login functionality', function () {
     expect($response->status())->toBe(200);
     expect($response->json('token'))->not->toBeNull();
 });
+
+// 2. login wrong password
+it('login fail if wrong password', function () {
+    Http::fake([
+        'https://api.lyu.qelemmeda.et/api/login' => Http::response([
+            'error' => 'invalid credentials'
+        ], 401)
+    ]);
+
+    $payload = [
+        'email' => 'test@example.com',
+        'password' => 'wrongpassword',
+    ];
+
+    $response = Http::post('https://api.lyu.qelemmeda.et/api/login', $payload);
+
+    expect($response->status())->toBe(401);
+    expect($response->json('error'))->toBe('invalid credentials');
+});
+
+// 3. login non existent user
+it('login fail if user not found', function () {
+    Http::fake([
+        'https://api.lyu.qelemmeda.et/api/login' => Http::response([
+            'error' => 'User Not found'
+        ], 404)
+    ]);
+
+    $payload = [
+        'email' => 'nonexistent@example.com',
+        'password' => 'somepassword',
+    ];
+
+    $response = Http::post('https://api.lyu.qelemmeda.et/api/login', $payload);
+
+    expect($response->status())->toBe(404);
+    expect($response->json('error'))->toBe('User Not found');
+});
+
+// 4. login missing email
+it('login fail if email missing', function () {
+    Http::fake([
+        'https://api.lyu.qelemmeda.et/api/login' => Http::response([
+            'error' => 'Email required'
+        ], 422)
+    ]);
+
+    $payload = [
+        'password' => 'testpassword',
+    ];
+
+    $response = Http::post('https://api.lyu.qelemmeda.et/api/login', $payload);
+
+    expect($response->status())->toBe(422);
+    expect($response->json('error'))->toBe('Email required');
+});
+
+// 5. login missing password
+it('login fail if password missing', function () {
+    Http::fake([
+        'https://api.lyu.qelemmeda.et/api/login' => Http::response([
+            'error' => 'Password required'
+        ], 422)
+    ]);
+
+    $payload = [
+        'email' => 'test@example.com',
+    ];
+
+    $response = Http::post('https://api.lyu.qelemmeda.et/api/login', $payload);
+
+    expect($response->status())->toBe(422);
+    expect($response->json('error'))->toBe('Password required');
+});
+
