@@ -1,0 +1,61 @@
+
+Backend – Laravel
+
+Install PHP and Composer
+
+PHP 8.x recommended
+
+Composer for dependency management
+
+composer install
+
+
+Install Laravel Dependencies
+
+composer require laravel/framework
+composer require laravel/sanctum # for authentication if needed
+composer require guzzlehttp/guzzle # for HTTP client testing
+composer require pestphp/pest --dev # for Pest testing
+
+
+Database Setup
+
+Configure .env with database credentials
+
+Run migrations:
+
+php artisan migrate
+
+
+Install Laravel HTTP Testing Tools
+
+Pest handles unit/feature tests
+
+Optionally, install laravel/dusk if UI browser automation is needed
+
+Frontend – Vue.js
+
+Install Node.js and npm/yarn
+
+Node.js v18+ recommended
+
+Initialize Vue.js Project
+
+npm create vue@latest my-app
+cd my-app
+npm install
+
+
+Install Cypress for E2E Testing
+
+npm install cypress --save-dev
+
+
+Optional – Axios for API Calls
+
+npm install axios
+
+
+Run Frontend Development Server
+
+npm run dev
