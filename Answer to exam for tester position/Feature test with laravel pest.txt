@@ -1,4 +1,4 @@
-use Illuminate\Support\Facades\Http;
+
 
 // 1. Successful registration
 it('Register a user successfull', function () {
@@ -138,7 +138,6 @@ it('register fail if phone number invalid', function () {
 
 
 
-use Illuminate\Support\Facades\Http;
 
 // 1. login success
 it('Login successfull with correct details', function () {
